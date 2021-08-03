@@ -1,0 +1,30 @@
+[package]
+name = "sten"
+description = "Strict encoding schema library and compiler"
+version = "0.1.0"
+authors = ["Dr Maxim Orlovsky <orlovsky@pandoracore.com>"]
+edition = "2018"
+license = "MIT"
+repository = "https://github.com/internet2-org/stenc"
+homepage = "https://strict-encoding.lnp-bp.org"
+keywords = ["language", "aluvm", "strict-encoding", "compiler", "schema"]
+categories = ["compilers"]
+readme = "README.md"
+exclude = [".github"]
+
+[lib]
+name = "sten"
+
+[[bin]]
+name = "stenc"
+path = "src/main.rs"
+
+[dependencies]
+amplify = "3.7.1"
+pest = "2.1"
+pest_derive = "2.1"
+clap = "3.0.0-beta.2"
+
+[features]
+default = []
+all = []

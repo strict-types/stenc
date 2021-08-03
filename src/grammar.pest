@@ -1,0 +1,41 @@
+file = ${SOI ~ package ~ EOI}
+package = ${"datapkg" ~ ident ~ (alias | data | NEWLINE)+}
+
+uint_type = {"U8" | "U16" | "U32" | "U64" | "U128" | "U256" | "U512"}
+int_type = {"I8" | "I16" | "I32" | "I64" | "I128" | "I256" | "I512"}
+float_type = {"F16B" | "F16" | "F32" | "F64" | "F80" | "F128"}
+data_type = @{uint_type | int_type | float_type}
+
+alias = {"alias" ~ ident ~ "::" ~ data_type}
+data = {"data" ~ ident ~ "::" ~ field ~ ("," ~ field)*}
+field = {ident? ~ field_req}
+field_req = ${data ~ data_modifier?}
+data_modifier = _{dm_option | dm_any | dm_many | dm_range}
+dm_option = {"?"}
+dm_any = {"*"}
+dm_many = {"+"}
+dm_range = {"^" ~ lit_num? ~ ".." ~ lit_num? }
+
+lit_significand_int = @{ ASCII_DIGIT+ }
+lit_significand_res = @{ ASCII_DIGIT+ }
+lit_exponential = @{ ASCII_DIGIT+ }
+lit_float = ${ lit_significand_int ~ "." ~ lit_significand_res ~ (^"e" ~ lit_exponential)? }
+lit_dec = @{ ASCII_DIGIT+ }
+lit_hex = @{ ^"0x" ~ ASCII_HEX_DIGIT+ }
+lit_oct = @{ ^"0o" ~ ASCII_OCT_DIGIT+ }
+lit_bin = @{ ^"0b" ~ ("1" | "0")+ }
+lit_str = @{ "\"" ~ (!(NEWLINE | "\"") ~ ANY)* ~ "\"" }
+lit_chr = @{ "\'" ~ (ANY | char_special) ~ "\'" }
+lit_num = { lit_dec | lit_hex | lit_oct | lit_bin }
+literal = { lit_float | lit_hex | lit_oct | lit_bin | lit_dec | lit_str | lit_chr }
+
+char_unicode = @{ "\\u{" ~ ASCII_HEX_DIGIT{1, 6} ~ "}"  }
+char_hex = @{ "\\x" ~ ('0'..'7')? ~ ASCII_HEX_DIGIT }
+char_lf = @{ "\\n" }
+char_cr = @{ "\\r" }
+char_ht = @{ "\\t" }
+char_null = @{ "\\0" }
+char_bs = @{ "\\\\" }
+char_special = _{ char_lf | char_cr | char_ht | char_bs | char_null | char_unicode | char_hex }
+
+ident = @{ ASCII_ALPHA ~ ASCII_ALPHANUMERIC* }
